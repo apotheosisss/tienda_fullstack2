@@ -1,7 +1,6 @@
 import React from 'react';
 import formatPrice from '../../utils/formatPrice.js';
 
-// --- Header ---
 const Header = ({ totalCartPrice, cartItemCount, navigate, userSession, handleLogout }) => {
     const isLoggedIn = !!userSession;
     const isAdmin = userSession?.role === 'admin';
@@ -14,7 +13,6 @@ const Header = ({ totalCartPrice, cartItemCount, navigate, userSession, handleLo
                 </a>
                 
                 <div className="d-flex align-items-center">
-                    {/* Botón Carrito solo visible si NO es admin (el admin no compra) */}
                     {!isAdmin && (
                         <button 
                             className="btn btn-warning me-3 position-relative" 
@@ -29,7 +27,6 @@ const Header = ({ totalCartPrice, cartItemCount, navigate, userSession, handleLo
                         </button>
                     )}
 
-                    {/* Botones de Auth */}
                     {isLoggedIn ? (
                         <div className="dropdown">
                             <button className="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -47,9 +44,19 @@ const Header = ({ totalCartPrice, cartItemCount, navigate, userSession, handleLo
                                         <li><hr className="dropdown-divider" /></li>
                                     </>
                                 )}
-                                <li><a className="dropdown-item" href="#">Perfil ({isAdmin ? 'Admin' : 'Cliente'})</a></li>
+                                {!isAdmin && (
+                                    <li>
+                                        <button className="dropdown-item" onClick={() => navigate('profile')}>
+                                            <i className="fas fa-user-edit me-2"></i> Perfil (Cliente)
+                                        </button>
+                                    </li>
+                                )}
                                 <li><hr className="dropdown-divider" /></li>
-                                <li><button className="dropdown-item text-danger" onClick={handleLogout}>Cerrar Sesión</button></li>
+                                <li>
+                                    <button className="dropdown-item text-danger" onClick={handleLogout}>
+                                        <i className="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                     ) : (

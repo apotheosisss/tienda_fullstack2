@@ -1,14 +1,11 @@
 // -----------------------------------------------------------
 // 1. LÓGICA DE DATOS Y PERSISTENCIA
-// (Extraído de App.js)
 // -----------------------------------------------------------
 
-// Claves de localStorage para persistencia, según ERS (Requisito 3.3.5)
 export const LOCAL_STORAGE_KEYS = {
     PRODUCTS: 'PRODUCTS_DATA',
     USERS: 'USERS_DATA',
     CART: 'CART_DATA',
-    // ERS 3.3.5 sugiere USER_PROFILE, lo usaremos para el estado de sesión
     SESSION: 'USER_SESSION', 
 };
 
@@ -22,9 +19,7 @@ const initialProducts = [
   { id: 6, name: 'Parlante Inalámbrico', price: 35000, category: 'Audio', stock: 0, imageUrl: 'https://placehold.co/400x200/1E3A8A/FFFFFF?text=Parlante+BT', description: 'Sonido potente y batería de larga duración.', discountPercentage: 0 },
 ];
 
-// -----------------------------------------------------------
 // DATOS DE REGIONES Y COMUNAS DE CHILE
-// -----------------------------------------------------------
 export const REGIONES_COMUNAS_CHILE = [
     { region: "Arica y Parinacota", communes: ["Arica", "Camarones", "Putre", "General Lagos"] },
     { region: "Tarapacá", communes: ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"] },
@@ -44,33 +39,22 @@ export const REGIONES_COMUNAS_CHILE = [
     { region: "Magallanes y la Antártica Chilena", communes: ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos", "Antártica", "Porvenir", "Primavera", "Tierra del Fuego", "Natales", "Torres del Paine"] },
 ];
 
-// Datos iniciales de usuarios (Mock Data)
-// IMPORTANTE: El usuario admin ahora tiene el rol 'admin'
 const initialUsers = [
     { name: 'Admin', email: 'admin@duoc.cl', password: 'password123', role: 'admin' },
 ];
 
-/**
- * Carga datos de localStorage o usa valores iniciales por defecto.
- * ERS 3.3.3: Consistencia de Datos - Devuelve estado por defecto si falla.
- */
 const getInitialData = (key, initialData) => {
     try {
         const stored = localStorage.getItem(key);
-        if (stored) {
-            const parsedData = JSON.parse(stored);
-            return parsedData;
-        }
+        if (stored) return JSON.parse(stored);
     } catch (e) {
-        console.error(`Error loading ${key} from localStorage, using default data.`, e);
+        console.error(`Error loading ${key}, using default data.`, e);
         localStorage.removeItem(key);
     }
-    // Si falla o no existe, establece el valor inicial y lo devuelve
     localStorage.setItem(key, JSON.stringify(initialData));
     return initialData;
 };
 
-// Funciones de utilidad para datos
 export const loadCartFromStorage = () => getInitialData(LOCAL_STORAGE_KEYS.CART, []);
 export const saveCartToStorage = (cart) => localStorage.setItem(LOCAL_STORAGE_KEYS.CART, JSON.stringify(cart));
 export const getProductsData = () => getInitialData(LOCAL_STORAGE_KEYS.PRODUCTS, initialProducts);
@@ -78,74 +62,71 @@ export const saveProductsData = (products) => localStorage.setItem(LOCAL_STORAGE
 export const getUsersData = () => getInitialData(LOCAL_STORAGE_KEYS.USERS, initialUsers);
 export const saveUsersData = (users) => localStorage.setItem(LOCAL_STORAGE_KEYS.USERS, JSON.stringify(users));
 
-/**
- * Función temporal para asegurar que el usuario admin esté presente con el rol 'admin'.
- */
 export const resetUsersIfEmpty = () => {
     const usersData = getUsersData();
-    const adminExists = usersData.some(u => u.email === 'admin@duoc.cl' && u.role === 'admin');
-
-    if (usersData.length === 0 || !adminExists) {
-        console.warn("User data was empty or corrupt/missing admin role. Resetting user list.");
+    if (usersData.length === 0 || !usersData.some(u => u.email === 'admin@duoc.cl' && u.role === 'admin')) {
         saveUsersData(initialUsers);
-        // Si hay que resetear, también nos aseguramos de que el admin en la lista devuelta tenga el rol
         return initialUsers; 
     }
     return usersData;
 };
 
-// Aseguramos la data inicial al cargar el módulo
 resetUsersIfEmpty();
 
-
-/**
- * @typedef {Object} UserSession
- * @property {string} email
- * @property {string} role - 'admin' o 'client'
- */
-
-/**
- * Inicia sesión y devuelve el objeto de sesión (email y role).
- * @param {string} email 
- * @param {string} password
- * @returns {UserSession | null}
- */
 export const loginUser = (email, password) => {
     const usersData = getUsersData(); 
     const user = usersData.find(u => u.email === email && u.password === password);
-    
     if (user) {
-        // Asignamos 'client' por defecto si el rol no está definido (para usuarios nuevos que se hayan registrado)
-        const role = user.role || 'client'; 
-        return { email: user.email, role: role };
+        return { email: user.email, role: user.role || 'client' };
     }
     return null;
 };
 
-// Registro
 export const registerUser = (name, email, password) => {
     const usersData = getUsersData();
     if (usersData.some(u => u.email === email)) {
-        return false; // Usuario ya existe
+        return false;
     }
-    // Los usuarios registrados tienen rol 'client'
-    const newUser = { name, email, password, role: 'client' }; 
+    const newUser = { 
+        name, 
+        email, 
+        password, 
+        role: 'client',
+        firstName: '',
+        lastName: '',
+        street: '',
+        department: '',
+        region: '',
+        commune: '',
+        additionalInfo: ''
+    }; 
     usersData.push(newUser);
     saveUsersData(usersData);
     return true;
 };
 
-// Funciones CRUD para productos (usadas en AdminDashboard)
+export const getUserProfile = (email) => {
+    const usersData = getUsersData();
+    return usersData.find(user => user.email === email) || null;
+};
 
-/**
- * Añade un producto nuevo.
- * @param {object} product - Datos del producto (sin ID)
- */
+export const updateUserProfile = (email, updatedData) => {
+    const usersData = getUsersData();
+    const userIndex = usersData.findIndex(user => user.email === email);
+
+    if (userIndex > -1) {
+        usersData[userIndex] = { ...usersData[userIndex], ...updatedData };
+        saveUsersData(usersData);
+        return true;
+    }
+    return false;
+};
+
 export const addProduct = (product) => {
     const productsData = getProductsData();
     const newProduct = { 
         ...product, 
-        id: Date.now(), // ID simple basado en timestamp
+        id: Date.now(),
         stock: parseInt(product.stock, 10) || 0, 
         price: parseInt(product.price, 10) || 0
     };
@@ -154,10 +135,6 @@ export const addProduct = (product) => {
     return productsData;
 };
 
-/**
- * Actualiza un producto existente.
- * @param {object} updatedProduct - Producto con ID y datos actualizados.
- */
 export const updateProduct = (updatedProduct) => {
     const productsData = getProductsData();
     const index = productsData.findIndex(p => p.id === updatedProduct.id);
@@ -172,10 +149,6 @@ export const updateProduct = (updatedProduct) => {
     return productsData;
 };
 
-/**
- * Elimina un producto por ID.
- * @param {number} productId
- */
 export const deleteProduct = (productId) => {
     let productsData = getProductsData();
     productsData = productsData.filter(p => p.id !== productId);

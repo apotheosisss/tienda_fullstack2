@@ -16,15 +16,12 @@ import LoginForm from './views/LoginForm.js';
 import RegisterForm from './views/RegisterForm.js';
 import AdminDashboard from './views/AdminDashboard/AdminDashboard.js';
 import CheckoutPage from './views/CheckoutPage.js';
-import OffersPage from './views/OffersPage.js'; // ¡NUEVO!
-import ContactPage from './views/ContactPage.js'; // ¡NUEVO!
+import OffersPage from './views/OffersPage.js';
+import ContactPage from './views/ContactPage.js';
+import ProfilePage from './views/ProfilePage.js'; // ¡NUEVO!
 
 // Importar Componente de Notificación
-import ToastNotification from './components/ToastNotification.js'; // ¡NUEVO!
-
-// -----------------------------------------------------------
-// 5. COMPONENTE PRINCIPAL (App)
-// -----------------------------------------------------------
+import ToastNotification from './components/ToastNotification.js';
 
 // Carga inicial del estado de sesión desde localStorage
 const initialSessionJSON = localStorage.getItem(DataService.LOCAL_STORAGE_KEYS.SESSION);
@@ -32,14 +29,11 @@ const initialUserSession = initialSessionJSON ? JSON.parse(initialSessionJSON) :
 
 // Componente principal de la aplicación
 export default function App() {
-  // Estados principales de la aplicación
   const [products, setProducts] = useState(DataService.getProductsData()); 
   const [cartItems, setCartItems] = useState(DataService.loadCartFromStorage()); 
   const [currentPage, setCurrentPage] = useState('home');
   const [currentCategory, setCurrentCategory] = useState(null);
   const [userSession, setUserSession] = useState(initialUserSession);
-  
-  // ¡NUEVO ESTADO PARA LA NOTIFICACIÓN!
   const [toast, setToast] = useState({ message: '', show: false, type: 'success' });
   
   const isLoggedIn = !!userSession;
@@ -62,16 +56,13 @@ export default function App() {
     }
   }, [userSession, isAdmin, currentPage]);
 
-  // Función para mostrar la notificación
   const showToast = (message, type = 'success') => {
     setToast({ message, type, show: true });
-    // Ocultar después de 3 segundos
     setTimeout(() => {
         setToast(prev => ({ ...prev, show: false }));
     }, 3000);
   };
 
-  // Función de navegación basada en el estado
   const navigate = (page, param = null) => {
     setCurrentPage(page);
     if (page === 'category') {
@@ -79,13 +70,11 @@ export default function App() {
     }
   };
 
-  // Lógica para añadir producto al carrito
   const handleAddToCart = (productToAdd) => {
     if (isAdmin) return; 
     
     setCartItems(currentItems => {
       const existingItem = currentItems.find(item => item.id === productToAdd.id);
-      
       if (existingItem) {
         return currentItems.map(item =>
           item.id === productToAdd.id
@@ -96,12 +85,9 @@ export default function App() {
         return [...currentItems, { ...productToAdd, quantity: 1 }];
       }
     });
-
-    // ¡MOSTRAR NOTIFICACIÓN!
     showToast(`"${productToAdd.name}" añadido al carrito.`);
   };
 
-  // Lógica de Autenticación
   const handleLogin = (email, password) => {
       const session = DataService.loginUser(email, password); 
       if (session) {
@@ -120,7 +106,6 @@ export default function App() {
       navigate('home');
   };
 
-  // Cálculos derivados del estado (Memoization para optimización)
   const cartItemCount = useMemo(() => 
     cartItems.reduce((total, item) => total + item.quantity, 0), 
     [cartItems]
@@ -131,7 +116,6 @@ export default function App() {
     [cartItems]
   );
   
-  // Renderiza la vista actual
   const renderPage = () => {
     if (isAdmin) {
         return <AdminDashboard products={products} setProducts={setProducts} navigate={navigate} isAdmin={isAdmin} />;
@@ -150,12 +134,14 @@ export default function App() {
         return <RegisterForm navigate={navigate} handleRegister={handleRegister} />;
       case 'checkout':
         return <CheckoutPage cartItems={cartItems} setCartItems={setCartItems} navigate={navigate} userSession={userSession} />;
-      case 'offers': // ¡NUEVO CASO!
+      case 'offers':
         return <OffersPage products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
-      case 'contact': // ¡NUEVO CASO!
+      case 'contact':
         return <ContactPage />;
+      case 'profile': // ¡NUEVO CASO!
+        return <ProfilePage userSession={userSession} navigate={navigate} />;
       case 'admin-dashboard':
-        return <div className="container my-5"><div className="alert alert-danger">Acceso Denegado. Por favor inicie sesión como cliente.</div></div>
+        return <div className="container my-5"><div className="alert alert-danger">Acceso Denegado. Por favor inicie sesión como cliente.</div></div>;
       default:
         return <Home products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
     }
@@ -182,8 +168,7 @@ export default function App() {
         </main>
 
         <Footer />
-
-        {/* ¡NUEVO COMPONENTE DE NOTIFICACIÓN! */}
+        
         <ToastNotification 
             message={toast.message} 
             show={toast.show}
