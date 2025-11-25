@@ -1,13 +1,70 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* --- FUENTES TECH --- */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+  /* --- PALETA CYBERPUNK NEÓN --- */
+  --cyber-bg-dark: #050509;         /* Negro profundo */
+  --cyber-bg-panel: #0f172a;        /* Azul oscuro para paneles */
+  --cyber-bg-surface: #1e293b;      /* Superficies (Cards) */
+  
+  --cyber-neon-blue: #00f3ff;       /* Cian Eléctrico */
+  --cyber-neon-purple: #d946ef;     /* Magenta Neón */
+  --cyber-neon-green: #00ff99;      /* Verde Matrix */
+  --cyber-neon-red: #ff0055;        /* Rojo Láser */
+  
+  --cyber-text-main: #f8fafc;       /* Blanco casi puro */
+  --cyber-text-muted: #94a3b8;      /* Gris azulado */
+
+  /* --- SOBRESCRIBIR BOOTSTRAP (FORZAR DARK MODE) --- */
+  --bs-body-bg: var(--cyber-bg-dark);
+  --bs-body-color: var(--cyber-text-main);
+  --bs-heading-color: var(--cyber-text-main);
+  
+  --bs-primary: var(--cyber-neon-blue);
+  --bs-primary-rgb: 0, 243, 255;
+  --bs-secondary: var(--cyber-text-muted);
+  
+  --bs-link-color: var(--cyber-neon-blue);
+  --bs-link-hover-color: var(--cyber-neon-purple);
+  
+  --bs-border-color: rgba(0, 243, 255, 0.2);
+  --bs-card-bg: var(--cyber-bg-surface);
+  --bs-card-border-color: rgba(0, 243, 255, 0.1);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* --- RESET GLOBAL AGRESIVO --- */
+body, html {
+  background-color: var(--cyber-bg-dark) !important;
+  color: var(--cyber-text-main) !important;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Forzar color blanco en TODOS los textos que Bootstrap intente poner negros */
+.text-dark, .text-body, .text-black, .text-muted, p, span, div, h1, h2, h3, h4, h5, h6 {
+  color: var(--cyber-text-main) !important;
+}
+
+/* Excepción para textos que explícitamente queramos de otro color (como precios o alertas) */
+.text-primary { color: var(--cyber-neon-blue) !important; }
+.text-secondary { color: var(--cyber-text-muted) !important; }
+.text-success { color: var(--cyber-neon-green) !important; }
+.text-danger { color: var(--cyber-neon-red) !important; }
+.text-warning { color: #facc15 !important; }
+.text-info { color: var(--cyber-neon-purple) !important; }
+
+/* Títulos Futuristas */
+h1, h2, h3, .navbar-brand, .cyber-font {
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Scrollbar Matrix */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--cyber-bg-dark); }
+::-webkit-scrollbar-thumb { 
+  background: var(--cyber-neon-blue); 
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--cyber-neon-blue);
 }

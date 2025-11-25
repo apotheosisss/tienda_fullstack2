@@ -1,117 +1,50 @@
 import React from 'react';
 
-/**
- * Barra lateral de navegación para el panel de administrador.
- */
-const AdminSidenav = ({ activeSection, setActiveSection, handleLogout, navigate }) => {
-    
-    // Lista de enlaces de navegación
-    const navLinks = [
-        { key: 'dashboard', icon: 'fa-tachometer-alt', label: 'Dashboard' },
-        { key: 'orders', icon: 'fa-file-invoice-dollar', label: 'Órdenes' },
-        { key: 'products', icon: 'fa-box', label: 'Productos' },
-        { key: 'categories', icon: 'fa-tags', label: 'Categorías' },
-        { key: 'users', icon: 'fa-users', label: 'Usuarios' },
-        { key: 'reports', icon: 'fa-chart-bar', label: 'Reportes' },
+const AdminSidenav = ({ activeSection, setActiveSection }) => {
+    const menuItems = [
+        { id: 'home', label: 'Dashboard', icon: 'fa-tachometer-alt' },
+        { id: 'orders', label: 'Órdenes', icon: 'fa-shopping-bag' },
+        { id: 'products', label: 'Productos', icon: 'fa-box' },
+        { id: 'categories', label: 'Categorías', icon: 'fa-tags' },
+        { id: 'users', label: 'Usuarios', icon: 'fa-users' },
+        { id: 'reports', label: 'Reportes', icon: 'fa-chart-line' },
+        { id: 'profile', label: 'Perfil', icon: 'fa-user-cog' },
     ];
 
     return (
-        <>
-            {/* Estilos para el Sidenav */}
-            <style>
-                {`
-                .admin-sidebar-sticky {
-                    position: sticky;
-                    top: 0;
-                    height: 100vh; /* Altura completa */
-                    overflow-y: auto; /* Scroll si el contenido es mucho */
-                }
-                .admin-sidebar-sticky .nav-link {
-                    font-weight: 500;
-                    color: rgba(255, 255, 255, 0.7);
-                    padding: 0.75rem 1.5rem;
-                    display: flex;
-                    align-items: center;
-                }
-                .admin-sidebar-sticky .nav-link .fas {
-                    width: 24px; /* Espacio para el icono */
-                    margin-right: 0.5rem;
-                    text-align: center;
-                }
-                .admin-sidebar-sticky .nav-link:hover {
-                    color: #ffffff;
-                    background-color: rgba(255, 255, 255, 0.1);
-                }
-                .admin-sidebar-sticky .nav-link.active {
-                    color: #ffffff;
-                    background-color: #0d6efd; /* Color primario de Bootstrap */
-                }
-                .admin-sidebar-sticky .company-name {
-                    font-size: 1.25rem;
-                    font-weight: bold;
-                    color: #ffffff;
-                    padding: 1.5rem;
-                }
-                .sidebar-divider {
-                    border-top: 1px solid rgba(255, 255, 255, 0.15);
-                    margin: 1rem 0;
-                }
-                `}
-            </style>
-
-            <nav className="d-flex flex-column justify-content-between bg-dark admin-sidebar-sticky p-0">
-                {/* Parte superior: Título y Navegación */}
-                <div>
-                    <div className="company-name text-center text-md-start">
-                        ElectroPlus
-                    </div>
-                    
-                    <ul className="nav flex-column nav-pills">
-                        {navLinks.map(link => (
-                            <li className="nav-item" key={link.key}>
-                                <button
-                                    className={`nav-link w-100 text-start ${activeSection === link.key ? 'active' : ''}`}
-                                    onClick={() => setActiveSection(link.key)}
-                                >
-                                    <i className={`fas ${link.icon}`}></i>
-                                    {link.label}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Parte inferior: Perfil, Tienda y Logout */}
-                <div className="p-3">
-                    <ul className="nav flex-column">
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link w-100 text-start ${activeSection === 'profile' ? 'active' : ''}`}
-                                onClick={() => setActiveSection('profile')}
-                            >
-                                <i className="fas fa-user-circle"></i>
-                                Perfil
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div className="sidebar-divider"></div>
-                    
-                    <button 
-                        className="btn btn-primary w-100 mb-2"
-                        onClick={() => navigate('home')} // Navega a la vista pública
-                    >
-                        <i className="fas fa-store me-2"></i> Ver Tienda
-                    </button>
-                    <button 
-                        className="btn btn-danger w-100"
-                        onClick={handleLogout}
-                    >
-                        <i className="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
-                    </button>
-                </div>
-            </nav>
-        </>
+        <div 
+            className="d-flex flex-column flex-shrink-0 p-3 text-white h-100 shadow-lg" 
+            style={{ width: '280px', background: '#0f172a', borderRight: '1px solid #00f3ff' }}
+        >
+            <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                <span className="fs-4 fw-bold text-info" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                    <i className="fas fa-shield-alt me-2"></i>ADMIN
+                </span>
+            </div>
+            <hr className="border-info" />
+            <ul className="nav nav-pills flex-column mb-auto">
+                {menuItems.map(item => (
+                    <li key={item.id} className="nav-item mb-2">
+                        <button
+                            className={`nav-link w-100 text-start ${activeSection === item.id ? 'active' : 'text-secondary'}`}
+                            onClick={() => setActiveSection(item.id)}
+                            style={{ 
+                                borderRadius: '0px', 
+                                borderLeft: activeSection === item.id ? '4px solid #00f3ff' : '4px solid transparent',
+                                transition: 'all 0.3s' 
+                            }}
+                        >
+                            <i className={`fas ${item.icon} me-3`} style={{ width: '20px' }}></i>
+                            {item.label}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+            <hr className="border-info" />
+            <div className="text-center text-muted small">
+                <p className="mb-0">v2.0 TechStore</p>
+            </div>
+        </div>
     );
 };
 

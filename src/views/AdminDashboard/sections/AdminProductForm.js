@@ -1,81 +1,148 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AdminProductForm = ({ product, categories, onSave, onCancel }) => {
-    // ¡MODIFICADO! Ahora usa 'discountPercentage' en lugar de 'onOffer'
-    const initialFormState = product || { name: '', price: 0, category: categories[0], stock: 0, imageUrl: 'https://placehold.co/400x200/94A3B8/FFFFFF?text=Imagen', description: '', discountPercentage: 0 };
-    const [form, setForm] = useState(initialFormState);
-    
+    // 1. ALINEACIÓN CON BACKEND: Usamos nombre, categoria, descripcion
+    const [formData, setFormData] = useState({
+        id: null,
+        nombre: '',       // Antes: name
+        categoria: '',    // Antes: category
+        precio: '',       // precio (igual)
+        stock: '',        // stock (igual)
+        descripcion: '',  // Antes: description
+        imageUrl: '',     // imageUrl (igual - asegúrate que backend tenga este campo exacto o cámbialo a imagenUrl)
+        // Nota: El backend actual NO tiene 'discountPercentage', así que este campo no se guardará en la BD
+        // a menos que lo agregues en el modelo Java.
+    });
+
+    useEffect(() => {
+        if (product) {
+            setFormData({
+                id: product.id,
+                nombre: product.nombre || product.name || '', // Compatibilidad mientras migras
+                categoria: product.categoria || product.category || '',
+                precio: product.precio || product.price || '',
+                stock: product.stock || '',
+                descripcion: product.descripcion || product.description || '',
+                imageUrl: product.imageUrl || '',
+            });
+        }
+    }, [product]);
+
     const handleChange = (e) => {
-        const { name, value, type } = e.target;
-        // Aseguramos que los valores numéricos se guarden como números
-        const val = type === 'number' ? parseInt(value, 10) || 0 : value;
-        setForm(prev => ({ ...prev, [name]: val }));
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(form);
+        // Convertir tipos numéricos antes de enviar
+        const productToSave = {
+            ...formData,
+            precio: parseFloat(formData.precio),
+            stock: parseInt(formData.stock, 10)
+        };
+        onSave(productToSave);
     };
-    
+
     return (
-        <div className="card shadow-lg mb-5">
+        <div className="card shadow mb-4">
             <div className="card-header bg-primary text-white">
-                <h4 className="mb-0">{product ? 'Editar Producto' : 'Crear Nuevo Producto'}</h4>
+                <h5 className="mb-0">{product ? 'Editar Producto' : 'Nuevo Producto'}</h5>
             </div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-6 mb-3">
-                            <label htmlFor="name" className="form-label">Nombre</label>
-                            <input type="text" id="name" name="name" className="form-control" value={form.name} onChange={handleChange} required />
+                            <label className="form-label">Nombre del Producto</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="nombre" 
+                                value={formData.nombre}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                         <div className="col-md-6 mb-3">
-                            <label htmlFor="category" className="form-label">Categoría</label>
-                            <select id="category" name="category" className="form-select" value={form.category} onChange={handleChange} required>
-                                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                            <label className="form-label">Categoría</label>
+                            <select
+                                className="form-select"
+                                name="categoria"
+                                value={formData.categoria}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Seleccionar...</option>
+                                {categories.map((cat, index) => (
+                                    <option key={index} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="price" className="form-label">Precio</label>
-                            <input type="number" id="price" name="price" className="form-control" value={form.price} onChange={handleChange} required min="0" />
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="stock" className="form-label">Stock</label>
-                            <input type="number" id="stock" name="stock" className="form-control" value={form.stock} onChange={handleChange} required min="0" />
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="imageUrl" className="form-label">URL Imagen (Mock)</label>
-                            <input type="url" id="imageUrl" name="imageUrl" className="form-control" value={form.imageUrl} onChange={handleChange} />
-                        </div>
+                    </div>
 
-                        {/* ¡CAMPO MODIFICADO! De Switch a Input numérico para el descuento */}
-                        <div className="col-md-12 mb-3">
-                            <label htmlFor="discountPercentage" className="form-label fw-bold text-danger">Porcentaje de Descuento (%)</label>
-                            <input 
-                                type="number" 
-                                id="discountPercentage"
-                                name="discountPercentage" 
-                                className="form-control" 
-                                value={form.discountPercentage} 
-                                onChange={handleChange} 
-                                min="0" 
-                                max="99"
-                                placeholder="Ej: 25"
-                            />
-                            <div className="form-text">
-                                Ingresa un número entre 0 y 99. Si es 0, el producto no estará en oferta.
+                    <div className="row">
+                        <div className="col-md-4 mb-3">
+                            <label className="form-label">Precio</label>
+                            <div className="input-group">
+                                <span className="input-group-text">$</span>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    name="precio"
+                                    value={formData.precio}
+                                    onChange={handleChange}
+                                    required
+                                    min="0"
+                                />
                             </div>
                         </div>
-
-                        <div className="col-12 mb-4">
-                            <label className="form-label">Descripción</label>
-                            <textarea name="description" className="form-control" rows="3" value={form.description} onChange={handleChange}></textarea>
+                        <div className="col-md-4 mb-3">
+                            <label className="form-label">Stock</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                name="stock"
+                                value={formData.stock}
+                                onChange={handleChange}
+                                required
+                                min="0"
+                            />
                         </div>
                     </div>
-                    <div className="d-flex justify-content-end">
-                        <button type="button" className="btn btn-secondary me-2" onClick={onCancel}>Cancelar</button>
+
+                    <div className="mb-3">
+                        <label className="form-label">URL de Imagen</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="imageUrl"
+                            value={formData.imageUrl}
+                            onChange={handleChange}
+                            placeholder="https://ejemplo.com/imagen.jpg"
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="form-label">Descripción</label>
+                        <textarea
+                            className="form-control"
+                            name="descripcion"
+                            rows="3"
+                            value={formData.descripcion}
+                            onChange={handleChange}
+                        ></textarea>
+                    </div>
+
+                    <div className="d-flex justify-content-end gap-2">
+                        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+                            Cancelar
+                        </button>
                         <button type="submit" className="btn btn-success">
-                            <i className="fas fa-save me-2"></i> Guardar Producto
+                            <i className="fas fa-save me-2"></i>
+                            {product ? 'Actualizar' : 'Guardar'}
                         </button>
                     </div>
                 </form>

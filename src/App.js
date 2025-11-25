@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
+import './App.css';
 import * as DataService from './services/DataService.js';
 import Header from './components/Layout/Header.js';
 import Navbar from './components/Layout/Navbar.js';
@@ -19,7 +22,7 @@ const initialSessionJSON = localStorage.getItem(DataService.LOCAL_STORAGE_KEYS.S
 const initialUserSession = initialSessionJSON ? JSON.parse(initialSessionJSON) : null;
 
 export default function App() {
-  const [products, setProducts] = useState([]); // Empieza vacío
+  const [products, setProducts] = useState([]); 
   const [cartItems, setCartItems] = useState(DataService.loadCartFromStorage()); 
   const [currentPage, setCurrentPage] = useState('home');
   const [currentCategory, setCurrentCategory] = useState(null);
@@ -29,14 +32,13 @@ export default function App() {
   const isLoggedIn = !!userSession;
   const isAdmin = userSession?.role === 'admin';
 
-  // CARGA DE PRODUCTOS ASÍNCRONA (Desde Render)
   useEffect(() => {
     const fetchProducts = async () => {
         const data = await DataService.getProductsData();
         setProducts(data);
     };
     fetchProducts();
-  }, []); // Se ejecuta solo al montar
+  }, []);
 
   useEffect(() => {
     DataService.saveCartToStorage(cartItems);
@@ -81,7 +83,8 @@ export default function App() {
         return [...currentItems, { ...productToAdd, quantity: 1 }];
       }
     });
-    showToast(`"${productToAdd.name}" añadido al carrito.`);
+    // CORRECCIÓN: Usamos 'nombre' en lugar de 'name'
+    showToast(`"${productToAdd.nombre}" añadido al carrito.`);
   };
 
   const handleLogin = async (email, password) => {
@@ -108,8 +111,9 @@ export default function App() {
     [cartItems]
   );
   
+  // CORRECCIÓN: Usamos 'precio' en lugar de 'price'
   const totalCartPrice = useMemo(() => 
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0), 
+    cartItems.reduce((total, item) => total + (item.precio || 0) * item.quantity, 0), 
     [cartItems]
   );
   
@@ -145,7 +149,7 @@ export default function App() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="d-flex flex-column min-vh-100" style={{ fontFamily: 'Orbitron, sans-serif' }}>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />

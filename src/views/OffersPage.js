@@ -2,18 +2,16 @@ import React from 'react';
 import ProductCard from '../components/ProductCard/ProductCard.js';
 
 const OffersPage = ({ products, handleAddToCart, navigate }) => {
-    // --- ¡CORRECCIÓN CLAVE AQUÍ! ---
-    // Filtramos solo los productos que tienen un descuento mayor a 0
-    const offerProducts = products.filter(p => p.discountPercentage > 0);
+    // Lógica temporal: Mostrar productos con stock bajo (< 10) como "Ofertas / Liquidación"
+    const offerProducts = products.filter(p => p.stock < 10);
 
     return (
         <div className="container my-5">
-            <div className="text-center mb-5 p-5 bg-danger text-white rounded-lg shadow-lg">
-                <h1 className="display-4 font-weight-bold">¡Ofertas Imperdibles!</h1>
-                <p className="lead">Aprovecha nuestros descuentos especiales en productos seleccionados.</p>
-            </div>
-
-            <h2 className="mb-4 text-center text-primary">Productos en Oferta</h2>
+            <h2 className="mb-4 text-center text-warning fw-bold" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                <i className="fas fa-bolt me-2"></i> ÚLTIMAS UNIDADES
+            </h2>
+            <p className="text-center text-secondary mb-5">¡Aprovecha antes de que se agoten!</p>
+            
             <div className="row">
                 {offerProducts.length > 0 ? (
                     offerProducts.map(product => (
@@ -25,10 +23,8 @@ const OffersPage = ({ products, handleAddToCart, navigate }) => {
                         />
                     ))
                 ) : (
-                    <div className="col-12 text-center">
-                        <div className="alert alert-info">
-                            <p className="lead mb-0">No hay ofertas disponibles en este momento. ¡Vuelve pronto!</p>
-                        </div>
+                    <div className="text-center text-muted py-5">
+                        <h4>Por el momento no hay liquidaciones activas.</h4>
                     </div>
                 )}
             </div>

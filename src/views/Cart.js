@@ -1,92 +1,89 @@
 import React from 'react';
 import formatPrice from '../utils/formatPrice.js';
 
-// --- Cart View ---
 const Cart = ({ cartItems, setCartItems, navigate }) => {
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    
+    // CORRECCIÓN: 'precio' en vez de 'price'
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.precio || 0) * item.quantity, 0);
 
-    const updateQuantity = (id, change) => {
-        setCartItems(currentItems => {
-            const newItems = currentItems.map(item =>
-                item.id === id ? { ...item, quantity: item.quantity + change } : item
-            ).filter(item => item.quantity > 0);
-            return newItems;
-        });
+    const handleQuantityChange = (id, newQuantity) => {
+        if (newQuantity < 1) return;
+        setCartItems(cartItems.map(item => 
+            item.id === id ? { ...item, quantity: newQuantity } : item
+        ));
     };
 
-    const removeItem = (id) => {
-        setCartItems(currentItems => currentItems.filter(item => item.id !== id));
+    const handleRemoveItem = (id) => {
+        setCartItems(cartItems.filter(item => item.id !== id));
     };
 
-    const handleCheckout = () => {
-        if (cartItems.length > 0) {
-            // ¡CAMBIO CLAVE AQUÍ!
-            // Ahora navegamos a la página de checkout en lugar de procesar directamente
-            navigate('checkout'); 
-        } else {
-            console.log("El carrito está vacío.");
-        }
-    };
+    if (cartItems.length === 0) {
+        return (
+            <div className="container my-5 text-center text-white">
+                <div className="p-5 rounded-4" style={{ background: '#1e293b' }}>
+                    <i className="fas fa-shopping-cart fa-4x text-secondary mb-3"></i>
+                    <h2>Tu carrito está vacío</h2>
+                    <p className="text-muted">¡Explora nuestro catálogo tecnológico!</p>
+                    <button className="btn btn-primary mt-3" onClick={() => navigate('home')}>
+                        Ir a la Tienda
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="container my-5">
-            <h1 className="mb-4 text-center text-primary">Tu Carrito de Compras</h1>
+            <h2 className="mb-4 text-white fw-bold"><i className="fas fa-shopping-cart me-2 text-primary"></i> Carrito de Compras</h2>
             <div className="row">
                 <div className="col-lg-8">
-                    {cartItems.length === 0 ? (
-                        <div className="alert alert-info text-center" role="alert">
-                            Tu carrito está vacío. ¡Añade algunos productos!
-                            <button className="btn btn-info ms-3" onClick={() => navigate('home')}>
-                                Ir a comprar
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="list-group shadow">
+                    <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
+                        <div className="card-body p-0">
                             {cartItems.map(item => (
-                                <div key={item.id} className="list-group-item d-flex align-items-center justify-content-between p-3">
-                                    <div className="d-flex align-items-center">
-                                        <img src={item.imageUrl} alt={item.name} className="img-fluid rounded me-3" style={{ width: '60px', height: '60px', objectFit: 'cover' }} />
-                                        <div>
-                                            <h5 className="mb-1">{item.name}</h5>
-                                            <p className="mb-1 text-muted"><small>{formatPrice(item.price)} c/u</small></p>
-                                        </div>
+                                <div key={item.id} className="d-flex align-items-center p-3 border-bottom border-secondary">
+                                    <img 
+                                        src={item.imageUrl || 'https://via.placeholder.com/100'} 
+                                        alt={item.nombre} 
+                                        className="rounded-3 object-fit-cover" 
+                                        style={{ width: '80px', height: '80px' }} 
+                                    />
+                                    <div className="ms-3 flex-grow-1">
+                                        {/* CORRECCIÓN: item.nombre */}
+                                        <h5 className="mb-1 text-white fw-bold">{item.nombre}</h5>
+                                        <p className="mb-0 text-info">{formatPrice(item.precio)}</p>
                                     </div>
-                                    
                                     <div className="d-flex align-items-center">
-                                        <div className="btn-group me-3" role="group" aria-label="Control de cantidad">
-                                            <button className="btn btn-outline-secondary btn-sm" onClick={() => updateQuantity(item.id, -1)}>-</button>
-                                            <span className="btn btn-light btn-sm disabled">{item.quantity}</span>
-                                            <button className="btn btn-outline-secondary btn-sm" onClick={() => updateQuantity(item.id, 1)}>+</button>
-                                        </div>
-                                        <p className="mb-0 fw-bold me-3">{formatPrice(item.price * item.quantity)}</p>
-                                        <button className="btn btn-danger btn-sm" onClick={() => removeItem(item.id)} aria-label="Eliminar producto">
-                                            <i className="fas fa-trash"></i>
-                                        </button>
+                                        <button className="btn btn-sm btn-dark border-secondary" onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
+                                        <span className="mx-3 text-white fw-bold">{item.quantity}</span>
+                                        <button className="btn btn-sm btn-dark border-secondary" onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
                                     </div>
+                                    <button className="btn btn-outline-danger btn-sm ms-4" onClick={() => handleRemoveItem(item.id)}>
+                                        <i className="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             ))}
                         </div>
-                    )}
+                    </div>
                 </div>
-
                 <div className="col-lg-4 mt-4 mt-lg-0">
-                    <div className="card shadow-lg">
+                    <div className="card shadow-sm border-0 text-white" style={{ background: '#0f172a', border: '1px solid #334155' }}>
                         <div className="card-body">
-                            <h4 className="card-title text-center text-success mb-4">Resumen de Compra</h4>
-                            <div className="d-flex justify-content-between mb-3 border-bottom pb-2">
-                                <p className="mb-0">Subtotal ({cartItems.length} items):</p>
-                                <p className="mb-0 fw-bold">{formatPrice(total)}</p>
+                            <h4 className="card-title fw-bold mb-4">Resumen</h4>
+                            <div className="d-flex justify-content-between mb-3">
+                                <span className="text-secondary">Subtotal</span>
+                                <span className="fw-bold">{formatPrice(subtotal)}</span>
                             </div>
+                            <div className="d-flex justify-content-between mb-3">
+                                <span className="text-secondary">Envío</span>
+                                <span className="text-success">Gratis</span>
+                            </div>
+                            <hr className="border-secondary" />
                             <div className="d-flex justify-content-between mb-4">
-                                <h5 className="mb-0">Total:</h5>
-                                <h5 className="mb-0 fw-bold text-success">{formatPrice(total)}</h5>
+                                <span className="h5 fw-bold">Total</span>
+                                <span className="h5 fw-bold text-primary">{formatPrice(subtotal)}</span>
                             </div>
-                            <button 
-                                className="btn btn-success btn-lg w-100" 
-                                onClick={handleCheckout}
-                                disabled={cartItems.length === 0}
-                            >
-                                <i className="fas fa-credit-card me-2"></i> Procesar Pago
+                            <button className="btn btn-success w-100 btn-lg fw-bold shadow" onClick={() => navigate('checkout')}>
+                                PROCEDER AL PAGO
                             </button>
                         </div>
                     </div>
@@ -97,4 +94,3 @@ const Cart = ({ cartItems, setCartItems, navigate }) => {
 };
 
 export default Cart;
-// --- END OF FILE Cart.js ---
