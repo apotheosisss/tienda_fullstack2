@@ -1,70 +1,52 @@
-/* --- FUENTES TECH --- */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap');
 
 :root {
-  /* --- PALETA CYBERPUNK NEÓN --- */
-  --cyber-bg-dark: #050509;         /* Negro profundo */
-  --cyber-bg-panel: #0f172a;        /* Azul oscuro para paneles */
-  --cyber-bg-surface: #1e293b;      /* Superficies (Cards) */
+  /* PROPIEDAD MÁGICA: Fuerza a los controles nativos (Select, Scrollbar) al modo oscuro */
+  color-scheme: dark; 
   
-  --cyber-neon-blue: #00f3ff;       /* Cian Eléctrico */
-  --cyber-neon-purple: #d946ef;     /* Magenta Neón */
-  --cyber-neon-green: #00ff99;      /* Verde Matrix */
-  --cyber-neon-red: #ff0055;        /* Rojo Láser */
+  --cyber-bg-dark: #050509;
+  --cyber-bg-panel: #0f172a;
+  --cyber-bg-input: #1e293b;
+  --cyber-neon-blue: #00f3ff;
+  --cyber-text-main: #ffffff;
   
-  --cyber-text-main: #f8fafc;       /* Blanco casi puro */
-  --cyber-text-muted: #94a3b8;      /* Gris azulado */
-
-  /* --- SOBRESCRIBIR BOOTSTRAP (FORZAR DARK MODE) --- */
-  --bs-body-bg: var(--cyber-bg-dark);
-  --bs-body-color: var(--cyber-text-main);
-  --bs-heading-color: var(--cyber-text-main);
-  
-  --bs-primary: var(--cyber-neon-blue);
-  --bs-primary-rgb: 0, 243, 255;
-  --bs-secondary: var(--cyber-text-muted);
-  
-  --bs-link-color: var(--cyber-neon-blue);
-  --bs-link-hover-color: var(--cyber-neon-purple);
-  
-  --bs-border-color: rgba(0, 243, 255, 0.2);
-  --bs-card-bg: var(--cyber-bg-surface);
-  --bs-card-border-color: rgba(0, 243, 255, 0.1);
+  /* Variables Bootstrap Override */
+  --bs-body-bg: #050509;
+  --bs-body-color: #ffffff;
 }
 
-/* --- RESET GLOBAL AGRESIVO --- */
+/* --- REGLAS GLOBALES --- */
 body, html {
   background-color: var(--cyber-bg-dark) !important;
   color: var(--cyber-text-main) !important;
   font-family: 'Roboto', sans-serif;
-  overflow-x: hidden;
 }
 
-/* Forzar color blanco en TODOS los textos que Bootstrap intente poner negros */
-.text-dark, .text-body, .text-black, .text-muted, p, span, div, h1, h2, h3, h4, h5, h6 {
+/* Componentes con Fondo Sólido Oscuro */
+.card, .modal-content, .dropdown-menu, .list-group-item {
+  background-color: var(--cyber-bg-panel) !important;
   color: var(--cyber-text-main) !important;
+  border: 1px solid rgba(0, 243, 255, 0.2) !important;
 }
 
-/* Excepción para textos que explícitamente queramos de otro color (como precios o alertas) */
-.text-primary { color: var(--cyber-neon-blue) !important; }
-.text-secondary { color: var(--cyber-text-muted) !important; }
-.text-success { color: var(--cyber-neon-green) !important; }
-.text-danger { color: var(--cyber-neon-red) !important; }
+/* Tablas Transparentes (para heredar el fondo del card) */
+table, th, td, tr, .table {
+  background-color: transparent !important;
+  color: var(--cyber-text-main) !important;
+  border-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+/* Textos Legibles */
+.text-info { color: #00f3ff !important; }
+.text-success { color: #00ff99 !important; }
 .text-warning { color: #facc15 !important; }
-.text-info { color: var(--cyber-neon-purple) !important; }
+.text-danger { color: #ff0055 !important; }
+.text-secondary, .text-muted { color: #94a3b8 !important; }
+.text-white { color: #ffffff !important; }
 
-/* Títulos Futuristas */
-h1, h2, h3, .navbar-brand, .cyber-font {
-  font-family: 'Orbitron', sans-serif;
+/* Títulos */
+.cyber-font, h1, h2, h3, h4, .navbar-brand { 
+  font-family: 'Orbitron', sans-serif; 
+  letter-spacing: 1px; 
   text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Scrollbar Matrix */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--cyber-bg-dark); }
-::-webkit-scrollbar-thumb { 
-  background: var(--cyber-neon-blue); 
-  border-radius: 4px;
-  box-shadow: 0 0 10px var(--cyber-neon-blue);
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdminSidenav = ({ activeSection, setActiveSection }) => {
+const AdminSidenav = ({ activeSection, setActiveSection, handleLogout }) => {
     const menuItems = [
         { id: 'home', label: 'Dashboard', icon: 'fa-tachometer-alt' },
         { id: 'orders', label: 'Órdenes', icon: 'fa-shopping-bag' },
@@ -13,7 +13,7 @@ const AdminSidenav = ({ activeSection, setActiveSection }) => {
 
     return (
         <div 
-            className="d-flex flex-column flex-shrink-0 p-3 text-white h-100 shadow-lg" 
+            className="d-flex flex-column flex-shrink-0 p-3 text-white h-100 shadow-lg position-relative" 
             style={{ width: '280px', background: '#0f172a', borderRight: '1px solid #00f3ff' }}
         >
             <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
@@ -41,6 +41,17 @@ const AdminSidenav = ({ activeSection, setActiveSection }) => {
                 ))}
             </ul>
             <hr className="border-info" />
+            
+            {/* Botón de Salida */}
+            <div className="mb-3">
+                <button 
+                    className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2"
+                    onClick={handleLogout}
+                >
+                    <i className="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+
             <div className="text-center text-muted small">
                 <p className="mb-0">v2.0 TechStore</p>
             </div>

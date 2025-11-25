@@ -8,7 +8,7 @@ import AdminUsers from './sections/AdminUsers.js';
 import AdminReports from './sections/AdminReports.js';
 import AdminProfile from './sections/AdminProfile.js';
 
-const AdminDashboard = ({ products, setProducts, navigate, isAdmin }) => {
+const AdminDashboard = ({ products, setProducts, navigate, isAdmin, handleLogout }) => {
     const [activeSection, setActiveSection] = useState('home');
 
     if (!isAdmin) return null;
@@ -29,7 +29,12 @@ const AdminDashboard = ({ products, setProducts, navigate, isAdmin }) => {
     return (
         <div className="d-flex min-vh-100 bg-dark">
             <div className="flex-shrink-0">
-                <AdminSidenav activeSection={activeSection} setActiveSection={setActiveSection} />
+                {/* Pasamos handleLogout al menú */}
+                <AdminSidenav 
+                    activeSection={activeSection} 
+                    setActiveSection={setActiveSection} 
+                    handleLogout={handleLogout} 
+                />
             </div>
             <div className="flex-grow-1 p-4 text-white" style={{ overflowY: 'auto', background: '#050509' }}>
                 <div className="container-fluid">

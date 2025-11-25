@@ -2,73 +2,77 @@ import React from 'react';
 import formatPrice from '../../utils/formatPrice.js';
 
 const Header = ({ totalCartPrice, cartItemCount, navigate, userSession, handleLogout }) => {
-    const isLoggedIn = !!userSession;
-    const isAdmin = userSession?.role === 'admin';
-
     return (
-        <header className="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg sticky-top">
-            <div className="container-fluid">
-                <a className="navbar-brand fs-3 font-weight-bold text-white" href="#" onClick={() => navigate('home')}>
-                    ElectroPlus
-                </a>
+        <header className="py-2 border-bottom border-secondary">
+            <div className="container d-flex justify-content-end align-items-center gap-3">
                 
-                <div className="d-flex align-items-center">
-                    {!isAdmin && (
-                        <button 
-                            className="btn btn-warning me-3 position-relative" 
-                            onClick={() => navigate('cart')}
-                            aria-label={`Ver carrito, ${cartItemCount} items, total ${formatPrice(totalCartPrice)}`}
-                        >
-                            <i className="fas fa-shopping-cart me-2"></i> 
-                            <span className="d-none d-sm-inline">Carrito</span>
-                            <span className="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
-                                {cartItemCount}
-                            </span>
-                        </button>
-                    )}
+                {/* Buscador */}
+                <div className="input-group input-group-sm d-none d-md-flex" style={{ maxWidth: '250px' }}>
+                    <input type="text" className="form-control bg-dark text-white border-secondary" placeholder="Buscar..." />
+                    <button className="btn btn-outline-info" type="button">
+                        <i className="fas fa-search"></i>
+                    </button>
+                </div>
 
-                    {isLoggedIn ? (
-                        <div className="dropdown">
-                            <button className="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i className="fas fa-user-circle me-1"></i> 
-                                {isAdmin ? 'ADMIN' : userSession.email}
-                            </button>
-                            <ul className="dropdown-menu dropdown-menu-end">
-                                {isAdmin && (
-                                    <>
-                                        <li>
-                                            <button className="dropdown-item fw-bold text-success" onClick={() => navigate('admin-dashboard')}>
-                                                <i className="fas fa-tachometer-alt me-2"></i> Dashboard Admin
-                                            </button>
-                                        </li>
-                                        <li><hr className="dropdown-divider" /></li>
-                                    </>
-                                )}
-                                {!isAdmin && (
-                                    <li>
-                                        <button className="dropdown-item" onClick={() => navigate('profile')}>
-                                            <i className="fas fa-user-edit me-2"></i> Perfil (Cliente)
-                                        </button>
-                                    </li>
-                                )}
-                                <li><hr className="dropdown-divider" /></li>
+                <div className="vr text-secondary mx-2" style={{ height: '25px' }}></div>
+
+                {/* Menú de Usuario */}
+                {userSession ? (
+                    <div className="dropdown">
+                        <button className="btn btn-sm text-white dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div className="rounded-circle bg-info d-flex justify-content-center align-items-center text-dark fw-bold" style={{ width: '30px', height: '30px' }}>
+                                {userSession.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="d-none d-sm-inline fw-bold">{userSession.name}</span>
+                        </button>
+                        
+                        <ul className="dropdown-menu dropdown-menu-end animate slideIn">
+                            {/* DETALLES DE PERFIL VISIBLES */}
+                            <li><h6 className="dropdown-header border-bottom border-secondary mb-2">{userSession.email}</h6></li>
+                            
+                            <li>
+                                <button className="dropdown-item" onClick={() => navigate('profile')}>
+                                    <i className="fas fa-user me-2 text-info"></i> Mi Perfil
+                                </button>
+                            </li>
+                            
+                            {userSession.role === 'admin' && (
                                 <li>
-                                    <button className="dropdown-item text-danger" onClick={handleLogout}>
-                                        <i className="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    <button className="dropdown-item" onClick={() => navigate('admin-dashboard')}>
+                                        <i className="fas fa-tachometer-alt me-2 text-warning"></i> Dashboard
                                     </button>
                                 </li>
-                            </ul>
-                        </div>
-                    ) : (
-                        <>
-                            <button className="btn btn-outline-light me-2" onClick={() => navigate('login')}>
-                                Iniciar Sesión
-                            </button>
-                            <button className="btn btn-light" onClick={() => navigate('register')}>
-                                Crear Cuenta
-                            </button>
-                        </>
+                            )}
+                            
+                            <li><hr className="dropdown-divider bg-secondary" /></li>
+                            
+                            <li>
+                                <button className="dropdown-item text-danger" onClick={handleLogout}>
+                                    <i className="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                ) : (
+                    <div className="d-flex gap-2">
+                        <button className="btn btn-sm btn-outline-light" onClick={() => navigate('login')}>Ingresar</button>
+                        <button className="btn btn-sm btn-info fw-bold" onClick={() => navigate('register')}>Registro</button>
+                    </div>
+                )}
+
+                {/* Carrito */}
+                <button className="btn-icon-nav position-relative ms-2" onClick={() => navigate('cart')}>
+                    <i className="fas fa-shopping-cart"></i>
+                    {cartItemCount > 0 && (
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-cart">
+                            {cartItemCount}
+                        </span>
                     )}
+                </button>
+                
+                <div className="d-none d-md-block text-end lh-1" style={{ fontSize: '0.8rem' }}>
+                    <div className="text-muted">Total</div>
+                    <div className="text-info fw-bold">{formatPrice(totalCartPrice)}</div>
                 </div>
             </div>
         </header>

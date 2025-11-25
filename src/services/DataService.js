@@ -36,7 +36,6 @@ export const loginUser = async (email, password) => {
                 name: backendUser.nombre,
                 email: backendUser.email,
                 role: backendUser.rol === 'ADMIN' ? 'admin' : 'client',
-                // Datos extra para perfil
                 id: backendUser.id
             };
             return session;
@@ -75,7 +74,6 @@ export const getUsers = async () => {
 
 export const createUser = async (userData) => {
     try {
-        // Reutilizamos el endpoint de registro o uno específico de admin si existiera
         await api.post('/auth/register', userData); 
         return true;
     } catch (error) {
@@ -131,6 +129,15 @@ export const deleteProduct = async (id) => {
 // 3. ÓRDENES, DASHBOARD Y PERFIL
 // -----------------------------------------------------------
 
+export const createOrder = async (orderData) => {
+    try {
+        const response = await api.post('/ordenes', orderData);
+        return response.data;
+    } catch (error) {
+        return null;
+    }
+};
+
 export const getOrders = async () => {
     try {
         const response = await api.get('/admin/ordenes');
@@ -141,13 +148,15 @@ export const getOrders = async () => {
     }
 };
 
+// --- ¡AQUÍ ESTABA EL ERROR! FALTABA ESTA FUNCIÓN ---
 export const updateOrderStatus = async (id, status) => {
     try {
         const response = await api.put(`/admin/ordenes/${id}/estado`, status, {
-            headers: { 'Content-Type': 'text/plain' } // Enviamos string plano
+            headers: { 'Content-Type': 'text/plain' }
         });
         return response.data;
     } catch (error) {
+        console.error("Error actualizando estado:", error);
         return null;
     }
 };
@@ -157,13 +166,10 @@ export const getDashboardStats = async () => {
         const response = await api.get('/admin/dashboard/stats');
         return response.data;
     } catch (error) {
-        // Si falla (ej: backend no actualizado), devolvemos ceros para no romper la UI
         return { usuarios: 0, productos: 0, ordenes: 0, ventas: 0 };
     }
 };
 
-// Perfil de Usuario (Simulado localmente para visualización rápida, 
-// idealmente debería haber un endpoint /api/users/me)
 export const getUserProfile = async (email) => {
     const storedSession = localStorage.getItem('USER_SESSION');
     if (storedSession) {
@@ -174,8 +180,6 @@ export const getUserProfile = async (email) => {
 };
 
 export const updateUserProfile = async (email, updatedData) => {
-    // En un entorno real llamaríamos a api.put('/usuarios/me', updatedData)
-    // Aquí actualizamos la sesión local
     const storedSession = localStorage.getItem('USER_SESSION');
     if (storedSession) {
         const session = JSON.parse(storedSession);
@@ -196,10 +200,22 @@ export const LOCAL_STORAGE_KEYS = {
 };
 
 export const REGIONES_COMUNAS_CHILE = [
-    { region: "Metropolitana", communes: ["Santiago", "Providencia", "Las Condes", "Maipú"] },
-    { region: "Valparaíso", communes: ["Valparaíso", "Viña del Mar", "Concón"] },
-    { region: "Biobío", communes: ["Concepción", "Talcahuano"] },
-    // ... Puedes agregar más si es necesario
+    { region: "Arica y Parinacota", communes: ["Arica", "Camarones", "Putre", "General Lagos"] },
+    { region: "Tarapacá", communes: ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"] },
+    { region: "Antofagasta", communes: ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"] },
+    { region: "Atacama", communes: ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"] },
+    { region: "Coquimbo", communes: ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"] },
+    { region: "Valparaíso", communes: ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llay-Llay", "Panquehue", "Putaendo", "Santa María", "Limache", "Olmué", "Quilpué", "Villa Alemana"] },
+    { region: "Metropolitana", communes: ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"] },
+    { region: "O'Higgins", communes: ["Rancagua", "Machalí", "Rengo", "San Fernando", "Santa Cruz", "Pichilemu", "San Vicente", "Requínoa"] },
+    { region: "Maule", communes: ["Talca", "Curicó", "Linares", "Cauquenes", "Constitución", "Parral", "San Javier"] },
+    { region: "Ñuble", communes: ["Chillán", "San Carlos", "Bulnes", "Yungay", "Quillón"] },
+    { region: "Biobío", communes: ["Concepción", "Talcahuano", "Los Ángeles", "Coronel", "Hualpén", "Chiguayante", "San Pedro de la Paz", "Lota", "Penco", "Tomé", "Arauco", "Lebu", "Cañete", "Contulmo", "Curanilahue", "Tirúa", "Nacimiento", "Negrete", "Mulchén", "Santa Bárbara", "Antuco", "Laja", "Yumbel", "Cabrero", "San Rosendo", "Tucapel", "Alto Biobío"] },
+    { region: "Araucanía", communes: ["Temuco", "Padre Las Casas", "Villarrica", "Pucón", "Angol", "Victoria", "Lautaro"] },
+    { region: "Los Ríos", communes: ["Valdivia", "La Unión", "Río Bueno", "Panguipulli", "Futrono"] },
+    { region: "Los Lagos", communes: ["Puerto Montt", "Osorno", "Castro", "Ancud", "Puerto Varas", "Frutillar", "Llanquihue"] },
+    { region: "Aysén", communes: ["Coyhaique", "Aysén", "Chile Chico", "Cochrane"] },
+    { region: "Magallanes", communes: ["Punta Arenas", "Puerto Natales", "Porvenir", "Cabo de Hornos"] }
 ];
 
 export const loadCartFromStorage = () => {

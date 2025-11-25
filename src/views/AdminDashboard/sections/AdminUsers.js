@@ -14,12 +14,13 @@ const AdminUsers = () => {
 
     return (
         <div>
-            <h2 className="mb-4 text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>Gestión de Usuarios</h2>
-            <div className="card bg-dark border-0 shadow">
+            <h2 className="mb-4 cyber-font text-white">Usuarios</h2>
+            <div className="card border-0 shadow">
                 <div className="table-responsive">
-                    <table className="table table-dark table-hover mb-0 align-middle">
+                    {/* AGREGADO: table-dark */}
+                    <table className="table table-dark table-hover mb-0 align-middle text-white">
                         <thead>
-                            <tr className="text-info">
+                            <tr className="text-info" style={{ borderBottom: '1px solid #00f3ff' }}>
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Email</th>
@@ -29,9 +30,9 @@ const AdminUsers = () => {
                         </thead>
                         <tbody>
                             {users.map(user => (
-                                <tr key={user.id}>
-                                    <td className="text-muted">#{user.id}</td>
-                                    <td className="fw-bold text-white">{user.nombre}</td>
+                                <tr key={user.id} style={{ borderBottom: '1px solid #334155' }}>
+                                    <td className="text-secondary">#{user.id}</td>
+                                    <td className="text-white">{user.nombre}</td>
                                     <td className="text-secondary">{user.email}</td>
                                     <td>
                                         <span className={`badge ${user.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'}`}>
@@ -39,15 +40,10 @@ const AdminUsers = () => {
                                         </span>
                                     </td>
                                     <td className="text-end">
-                                        <button className="btn btn-sm btn-outline-light" title="Ver Detalle">
-                                            <i className="fas fa-eye"></i>
-                                        </button>
+                                        <button className="btn btn-sm btn-outline-light"><i className="fas fa-eye"></i></button>
                                     </td>
                                 </tr>
                             ))}
-                            {users.length === 0 && (
-                                <tr><td colSpan="5" className="text-center py-4 text-muted">No hay usuarios registrados.</td></tr>
-                            )}
                         </tbody>
                     </table>
                 </div>

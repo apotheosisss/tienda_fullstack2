@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
-import './App.css';
 import * as DataService from './services/DataService.js';
+import { calculateDiscountedPrice } from './utils/priceHelper.js'; // IMPORTANTE
 import Header from './components/Layout/Header.js';
 import Navbar from './components/Layout/Navbar.js';
 import Footer from './components/Layout/Footer.js';
@@ -83,7 +81,6 @@ export default function App() {
         return [...currentItems, { ...productToAdd, quantity: 1 }];
       }
     });
-    // CORRECCIÓN: Usamos 'nombre' en lugar de 'name'
     showToast(`"${productToAdd.nombre}" añadido al carrito.`);
   };
 
@@ -111,40 +108,32 @@ export default function App() {
     [cartItems]
   );
   
-  // CORRECCIÓN: Usamos 'precio' en lugar de 'price'
+  // CÁLCULO DE TOTAL CON DESCUENTOS
   const totalCartPrice = useMemo(() => 
-    cartItems.reduce((total, item) => total + (item.precio || 0) * item.quantity, 0), 
+    cartItems.reduce((total, item) => {
+        const finalPrice = calculateDiscountedPrice(item.precio, item.descuento);
+        return total + (finalPrice * item.quantity);
+    }, 0), 
     [cartItems]
   );
   
   const renderPage = () => {
     if (isAdmin) {
-        return <AdminDashboard products={products} setProducts={setProducts} navigate={navigate} isAdmin={isAdmin} />;
+        return <AdminDashboard products={products} setProducts={setProducts} navigate={navigate} isAdmin={isAdmin} handleLogout={handleLogout} />;
     }
     
     switch (currentPage) {
-      case 'home':
-        return <Home products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
-      case 'category':
-        return <CategoryPage products={products} category={currentCategory} handleAddToCart={handleAddToCart} navigate={navigate} />;
-      case 'cart':
-        return <Cart cartItems={cartItems} setCartItems={setCartItems} navigate={navigate} />;
-      case 'login':
-        return <LoginForm navigate={navigate} handleLogin={handleLogin} />;
-      case 'register':
-        return <RegisterForm navigate={navigate} handleRegister={handleRegister} />;
-      case 'checkout':
-        return <CheckoutPage cartItems={cartItems} setCartItems={setCartItems} navigate={navigate} userSession={userSession} />;
-      case 'offers':
-        return <OffersPage products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
-      case 'contact':
-        return <ContactPage />;
-      case 'profile':
-        return <ProfilePage userSession={userSession} navigate={navigate} />;
-      case 'admin-dashboard':
-        return <div className="container my-5"><div className="alert alert-danger">Acceso Denegado.</div></div>;
-      default:
-        return <Home products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
+      case 'home': return <Home products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
+      case 'category': return <CategoryPage products={products} category={currentCategory} handleAddToCart={handleAddToCart} navigate={navigate} />;
+      case 'cart': return <Cart cartItems={cartItems} setCartItems={setCartItems} navigate={navigate} />;
+      case 'login': return <LoginForm navigate={navigate} handleLogin={handleLogin} />;
+      case 'register': return <RegisterForm navigate={navigate} handleRegister={handleRegister} />;
+      case 'checkout': return <CheckoutPage cartItems={cartItems} setCartItems={setCartItems} navigate={navigate} userSession={userSession} />;
+      case 'offers': return <OffersPage products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
+      case 'contact': return <ContactPage />;
+      case 'profile': return <ProfilePage userSession={userSession} navigate={navigate} />;
+      case 'admin-dashboard': return <div className="container my-5"><div className="alert alert-danger">Acceso Denegado.</div></div>;
+      default: return <Home products={products} handleAddToCart={handleAddToCart} navigate={navigate} />;
     }
   };
 
@@ -154,18 +143,25 @@ export default function App() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
         
-        <Header 
-            totalCartPrice={totalCartPrice} 
-            cartItemCount={cartItemCount}
-            navigate={navigate}
-            userSession={userSession}
-            handleLogout={handleLogout}
-        />
-        <Navbar navigate={navigate} isAdmin={isAdmin} />
+        {!isAdmin && (
+            <>
+                <Header 
+                    totalCartPrice={totalCartPrice} 
+                    cartItemCount={cartItemCount}
+                    navigate={navigate}
+                    userSession={userSession}
+                    handleLogout={handleLogout}
+                />
+                <Navbar navigate={navigate} isAdmin={isAdmin} />
+            </>
+        )}
+
         <main className="flex-grow-1">
             {renderPage()}
         </main>
-        <Footer />
+
+        {!isAdmin && <Footer />}
+        
         <ToastNotification message={toast.message} show={toast.show} type={toast.type} />
     </div>
   );

@@ -1,149 +1,99 @@
 import React, { useState, useEffect } from 'react';
 
 const AdminProductForm = ({ product, categories, onSave, onCancel }) => {
-    // 1. ALINEACIÓN CON BACKEND: Usamos nombre, categoria, descripcion
     const [formData, setFormData] = useState({
-        id: null,
-        nombre: '',       // Antes: name
-        categoria: '',    // Antes: category
-        precio: '',       // precio (igual)
-        stock: '',        // stock (igual)
-        descripcion: '',  // Antes: description
-        imageUrl: '',     // imageUrl (igual - asegúrate que backend tenga este campo exacto o cámbialo a imagenUrl)
-        // Nota: El backend actual NO tiene 'discountPercentage', así que este campo no se guardará en la BD
-        // a menos que lo agregues en el modelo Java.
+        id: null, nombre: '', categoria: '', precio: '', stock: '', descripcion: '', imageUrl: '',
+        descuento: 0 
     });
 
     useEffect(() => {
         if (product) {
             setFormData({
                 id: product.id,
-                nombre: product.nombre || product.name || '', // Compatibilidad mientras migras
-                categoria: product.categoria || product.category || '',
-                precio: product.precio || product.price || '',
+                nombre: product.nombre || '',
+                categoria: product.categoria || '',
+                precio: product.precio || '',
                 stock: product.stock || '',
-                descripcion: product.descripcion || product.description || '',
+                descripcion: product.descripcion || '',
                 imageUrl: product.imageUrl || '',
+                descuento: product.descuento || 0,
             });
         }
     }, [product]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Convertir tipos numéricos antes de enviar
-        const productToSave = {
+        onSave({
             ...formData,
             precio: parseFloat(formData.precio),
-            stock: parseInt(formData.stock, 10)
-        };
-        onSave(productToSave);
+            stock: parseInt(formData.stock, 10),
+            descuento: parseInt(formData.descuento, 10) || 0
+        });
     };
 
     return (
         <div className="card shadow mb-4">
-            <div className="card-header bg-primary text-white">
-                <h5 className="mb-0">{product ? 'Editar Producto' : 'Nuevo Producto'}</h5>
+            <div className="card-header bg-transparent border-bottom border-info">
+                <h5 className="mb-0 text-info cyber-font">{product ? 'Editar Producto' : 'Nuevo Producto'}</h5>
             </div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-6 mb-3">
-                            <label className="form-label">Nombre del Producto</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="nombre" 
-                                value={formData.nombre}
-                                onChange={handleChange}
-                                required
-                            />
+                            <label className="form-label text-white">Nombre</label>
+                            <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} required />
                         </div>
                         <div className="col-md-6 mb-3">
-                            <label className="form-label">Categoría</label>
-                            <select
-                                className="form-select"
-                                name="categoria"
-                                value={formData.categoria}
-                                onChange={handleChange}
-                                required
-                            >
+                            <label className="form-label text-white">Categoría</label>
+                            <select className="form-select" name="categoria" value={formData.categoria} onChange={handleChange} required>
                                 <option value="">Seleccionar...</option>
-                                {categories.map((cat, index) => (
-                                    <option key={index} value={cat}>{cat}</option>
-                                ))}
+                                {categories.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
                             </select>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-4 mb-3">
-                            <label className="form-label">Precio</label>
-                            <div className="input-group">
-                                <span className="input-group-text">$</span>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    name="precio"
-                                    value={formData.precio}
-                                    onChange={handleChange}
-                                    required
-                                    min="0"
-                                />
-                            </div>
+                            <label className="form-label text-white">Precio Original</label>
+                            <input type="number" className="form-control" name="precio" value={formData.precio} onChange={handleChange} required />
                         </div>
+                        
                         <div className="col-md-4 mb-3">
-                            <label className="form-label">Stock</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                name="stock"
-                                value={formData.stock}
-                                onChange={handleChange}
-                                required
-                                min="0"
+                            <label className="form-label text-warning">Descuento (%)</label>
+                            <input 
+                                type="number" 
+                                className="form-control border-warning text-warning" 
+                                name="descuento" 
+                                value={formData.descuento} 
+                                onChange={handleChange} 
+                                min="0" 
+                                max="99"
                             />
                         </div>
+
+                        <div className="col-md-4 mb-3">
+                            <label className="form-label text-white">Stock</label>
+                            <input type="number" className="form-control" name="stock" value={formData.stock} onChange={handleChange} required />
+                        </div>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label">URL de Imagen</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="imageUrl"
-                            value={formData.imageUrl}
-                            onChange={handleChange}
-                            placeholder="https://ejemplo.com/imagen.jpg"
-                        />
+                        <label className="form-label text-white">URL Imagen</label>
+                        <input type="text" className="form-control" name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
                     </div>
-
                     <div className="mb-3">
-                        <label className="form-label">Descripción</label>
-                        <textarea
-                            className="form-control"
-                            name="descripcion"
-                            rows="3"
-                            value={formData.descripcion}
-                            onChange={handleChange}
-                        ></textarea>
+                        <label className="form-label text-white">Descripción</label>
+                        <textarea className="form-control" name="descripcion" rows="3" value={formData.descripcion} onChange={handleChange}></textarea>
                     </div>
 
-                    <div className="d-flex justify-content-end gap-2">
-                        <button type="button" className="btn btn-secondary" onClick={onCancel}>
-                            Cancelar
-                        </button>
-                        <button type="submit" className="btn btn-success">
-                            <i className="fas fa-save me-2"></i>
-                            {product ? 'Actualizar' : 'Guardar'}
-                        </button>
+                    <div className="text-end">
+                        <button type="button" className="btn btn-outline-secondary me-2" onClick={onCancel}>Cancelar</button>
+                        <button type="submit" className="btn btn-info">Guardar</button>
                     </div>
                 </form>
             </div>

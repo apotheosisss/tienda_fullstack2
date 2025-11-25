@@ -1,45 +1,53 @@
-// --- START OF FILE src/components/Layout/Navbar.js ---
 import React from 'react';
 
 const Navbar = ({ navigate, isAdmin }) => {
-    if (isAdmin) return null;
-
-    const categories = ['Laptops', 'TVs', 'Audio', 'Monitores'];
-    
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
-            <div className="container-fluid">
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+        <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-3">
+            <div className="container">
+                {/* Logo o Marca */}
+                <button className="navbar-brand btn btn-link text-decoration-none p-0 border-0" onClick={() => navigate('home')}>
+                    <i className="fas fa-robot me-2" style={{ color: '#00f3ff' }}></i>
+                    <span className="fw-bold" style={{ fontFamily: 'Orbitron', letterSpacing: '2px', color: '#fff' }}>ELECTRO</span>
+                    <span className="fw-bold" style={{ fontFamily: 'Orbitron', letterSpacing: '2px', color: '#00f3ff' }}>PLUS</span>
                 </button>
-                <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-                    <ul className="navbar-nav">
+
+                <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span className="navbar-toggler-icon" style={{ filter: 'drop-shadow(0 0 5px #00f3ff)' }}></span>
+                </button>
+
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav ms-auto align-items-center gap-3">
                         <li className="nav-item">
-                            <a className="nav-link text-dark fw-bold" href="#" onClick={() => navigate('home')}>Home</a>
+                            <button className="nav-link btn btn-link" onClick={() => navigate('home')}>INICIO</button>
                         </li>
+                        
+                        {/* Dropdown Categorías */}
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarDropdownCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Categorías
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownCategories">
-                                {categories.map(cat => (
-                                    <li key={cat}>
-                                        <a className="dropdown-item" href="#" onClick={() => navigate('category', cat)}>{cat}</a>
-                                    </li>
-                                ))}
+                            <button className="nav-link btn btn-link dropdown-toggle" data-bs-toggle="dropdown">
+                                CATEGORÍAS
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end animate slideIn">
+                                <li><button className="dropdown-item" onClick={() => navigate('category', 'Laptops')}><i className="fas fa-laptop me-2"></i>Laptops</button></li>
+                                <li><button className="dropdown-item" onClick={() => navigate('category', 'TVs')}><i className="fas fa-tv me-2"></i>Smart TVs</button></li>
+                                <li><button className="dropdown-item" onClick={() => navigate('category', 'Audio')}><i className="fas fa-headphones me-2"></i>Audio</button></li>
+                                <li><button className="dropdown-item" onClick={() => navigate('category', 'Monitores')}><i className="fas fa-desktop me-2"></i>Monitores</button></li>
+                                <li><hr className="dropdown-divider bg-secondary" /></li>
+                                <li><button className="dropdown-item" onClick={() => navigate('offers')}><i className="fas fa-bolt text-warning me-2"></i>Ofertas</button></li>
                             </ul>
                         </li>
-                        {/* ¡ENLACES ACTUALIZADOS! */}
+
                         <li className="nav-item">
-                            <a className="nav-link text-danger fw-bold" href="#" onClick={() => navigate('offers')}>
-                                <i className="fas fa-tags me-1"></i> Ofertas
-                            </a>
+                            <button className="nav-link btn btn-link" onClick={() => navigate('contact')}>CONTACTO</button>
                         </li>
-                        <li className="nav-item">
-                            <a className="nav-link text-dark fw-bold" href="#" onClick={() => navigate('contact')}>
-                                <i className="fas fa-info-circle me-1"></i> Contacto
-                            </a>
-                        </li>
+
+                        {/* Botón Admin (Solo si es admin) */}
+                        {isAdmin && (
+                            <li className="nav-item">
+                                <button className="btn btn-sm btn-outline-danger border-2 fw-bold ms-2" onClick={() => navigate('admin-dashboard')}>
+                                    <i className="fas fa-shield-alt me-2"></i>ADMIN PANEL
+                                </button>
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>
@@ -48,4 +56,3 @@ const Navbar = ({ navigate, isAdmin }) => {
 };
 
 export default Navbar;
-// --- END OF FILE src/components/Layout/Navbar.js ---

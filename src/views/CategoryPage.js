@@ -2,19 +2,19 @@ import React from 'react';
 import ProductCard from '../components/ProductCard/ProductCard.js';
 
 const CategoryPage = ({ products, category, handleAddToCart, navigate }) => {
-    // CORRECCIÓN: Filtramos por 'categoria' (español)
     const filteredProducts = products.filter(p => 
-        p.categoria === category || p.category === category // Soporte dual por seguridad
+        (p.categoria || '').toLowerCase() === (category || '').toLowerCase() ||
+        (p.category || '').toLowerCase() === (category || '').toLowerCase()
     );
 
     return (
         <div className="container my-5">
-            <div className="d-flex align-items-center mb-4">
-                <button className="btn btn-outline-secondary me-3" onClick={() => navigate('home')}>
+            <div className="d-flex align-items-center mb-4 border-bottom border-info pb-3">
+                <button className="btn btn-outline-info me-3 rounded-circle" onClick={() => navigate('home')} style={{ width: '40px', height: '40px' }}>
                     <i className="fas fa-arrow-left"></i>
                 </button>
-                <h2 className="text-white mb-0 fw-bold" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                    CATEGORÍA: <span className="text-primary">{category.toUpperCase()}</span>
+                <h2 className="text-white mb-0 cyber-font">
+                    CATEGORÍA: <span className="text-neon-blue">{category?.toUpperCase()}</span>
                 </h2>
             </div>
 
@@ -30,8 +30,12 @@ const CategoryPage = ({ products, category, handleAddToCart, navigate }) => {
                     ))}
                 </div>
             ) : (
-                <div className="alert alert-info text-center" style={{ background: '#1e293b', color: '#fff', border: 'none' }}>
-                    <i className="fas fa-search me-2"></i> No se encontraron productos en esta categoría.
+                <div className="text-center py-5">
+                    <div className="mb-3">
+                        <i className="fas fa-search fa-3x text-secondary"></i>
+                    </div>
+                    <h4 className="text-muted">No hay productos en esta categoría.</h4>
+                    <button className="btn btn-primary mt-3" onClick={() => navigate('home')}>Volver al Inicio</button>
                 </div>
             )}
         </div>

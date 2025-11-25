@@ -1,33 +1,33 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard/ProductCard.js';
+import { hasDiscount } from '../utils/priceHelper.js';
 
 const OffersPage = ({ products, handleAddToCart, navigate }) => {
-    // Lógica temporal: Mostrar productos con stock bajo (< 10) como "Ofertas / Liquidación"
-    const offerProducts = products.filter(p => p.stock < 10);
+    const offerProducts = products.filter(p => hasDiscount(p));
 
     return (
         <div className="container my-5">
-            <h2 className="mb-4 text-center text-warning fw-bold" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                <i className="fas fa-bolt me-2"></i> ÚLTIMAS UNIDADES
+            <h2 className="mb-4 text-center text-warning cyber-font">
+                <i className="fas fa-tags me-2"></i> OFERTAS ESPECIALES
             </h2>
-            <p className="text-center text-secondary mb-5">¡Aprovecha antes de que se agoten!</p>
             
-            <div className="row">
-                {offerProducts.length > 0 ? (
-                    offerProducts.map(product => (
+            {offerProducts.length > 0 ? (
+                <div className="row">
+                    {offerProducts.map(product => (
                         <ProductCard 
                             key={product.id} 
                             product={product} 
-                            handleAddToCart={handleAddToCart}
-                            navigate={navigate}
+                            handleAddToCart={handleAddToCart} 
+                            navigate={navigate} 
                         />
-                    ))
-                ) : (
-                    <div className="text-center text-muted py-5">
-                        <h4>Por el momento no hay liquidaciones activas.</h4>
-                    </div>
-                )}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center text-secondary py-5">
+                    <i className="fas fa-frown fa-3x mb-3"></i>
+                    <h4>No hay ofertas disponibles por el momento.</h4>
+                </div>
+            )}
         </div>
     );
 };

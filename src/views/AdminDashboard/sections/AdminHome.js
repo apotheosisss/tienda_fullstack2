@@ -13,28 +13,28 @@ const AdminHome = () => {
         loadStats();
     }, []);
 
-    // Configuración de tarjetas con estilo Cyber
     const cards = [
-        { title: 'Ventas Totales', value: formatPrice(stats.ventas), icon: 'fa-wallet', color: 'text-neon-green', border: 'border-success' },
-        { title: 'Usuarios', value: stats.usuarios, icon: 'fa-users', color: 'text-neon-blue', border: 'border-info' },
+        { title: 'Ventas Totales', value: formatPrice(stats.ventas), icon: 'fa-wallet', color: 'text-success', border: 'border-success' },
+        { title: 'Usuarios', value: stats.usuarios, icon: 'fa-users', color: 'text-info', border: 'border-info' },
         { title: 'Órdenes', value: stats.ordenes, icon: 'fa-shopping-cart', color: 'text-warning', border: 'border-warning' },
-        { title: 'Productos', value: stats.productos, icon: 'fa-box-open', color: 'text-neon-pink', border: 'border-danger' },
+        { title: 'Productos', value: stats.productos, icon: 'fa-box-open', color: 'text-danger', border: 'border-danger' },
     ];
 
     return (
-        <div>
-            <h2 className="mb-4 text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>Dashboard Principal</h2>
+        <div className="container-fluid">
+            <h2 className="mb-4 cyber-font text-white">Dashboard General</h2>
             
-            {/* Tarjetas de Estadísticas */}
             <div className="row g-4 mb-5">
                 {cards.map((stat, index) => (
                     <div key={index} className="col-md-3">
-                        {/* FORZAMOS CLASES bg-dark text-white para asegurar visibilidad */}
-                        <div className={`card h-100 p-3 shadow-lg bg-dark text-white border-0 border-bottom border-3 ${stat.border}`} style={{ backgroundColor: '#1e293b !important' }}>
+                        <div className={`card h-100 p-3 shadow-lg border-0 border-bottom border-3 ${stat.border}`}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 className="text-muted text-uppercase mb-2" style={{ letterSpacing: '1px', fontSize: '0.8rem' }}>{stat.title}</h6>
-                                    <h3 className={`fw-bold mb-0 ${stat.color}`} style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                                    {/* AQUÍ ESTABA EL ERROR: Cambiado de text-muted a text-info (Neón Claro) */}
+                                    <h6 className="text-info text-uppercase mb-2 fw-bold" style={{ letterSpacing: '1px', fontSize: '0.8rem' }}>
+                                        {stat.title}
+                                    </h6>
+                                    <h3 className="fw-bold mb-0 text-white" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
                                         {stat.value}
                                     </h3>
                                 </div>
@@ -47,19 +47,17 @@ const AdminHome = () => {
                 ))}
             </div>
 
-            {/* Sección de Actividad */}
             <div className="row g-4">
                 <div className="col-md-8">
-                    <div className="card bg-dark text-white border-secondary shadow h-100">
-                        <div className="card-header bg-transparent border-secondary text-white">
-                            <h5 className="mb-0" style={{ fontFamily: 'Orbitron' }}>Actividad de Ventas (Semanal)</h5>
+                    <div className="card h-100">
+                        <div className="card-header bg-transparent border-secondary">
+                            <h5 className="mb-0 cyber-font text-white">Actividad de Ventas</h5>
                         </div>
-                        <div className="card-body d-flex align-items-end justify-content-around px-4 pb-0" style={{ height: '300px' }}>
-                            {/* Barras de Gráfico Simuladas con CSS y Gradientes Neón */}
-                            {[30, 50, 45, 80, 60, 90, 100].map((h, i) => (
+                        <div className="card-body d-flex align-items-end justify-content-around" style={{ height: '300px' }}>
+                            {[40, 70, 55, 90, 65, 85, 100].map((h, i) => (
                                 <div key={i} className="d-flex flex-column align-items-center w-100 mx-2">
                                     <div 
-                                        className="w-100 rounded-top shadow"
+                                        className="w-100 rounded-top"
                                         style={{ 
                                             height: `${h}%`, 
                                             background: 'linear-gradient(to top, #00f3ff, transparent)',
@@ -67,7 +65,6 @@ const AdminHome = () => {
                                             borderTop: '2px solid #00f3ff'
                                         }} 
                                     ></div>
-                                    <small className="text-muted mt-2">Día {i+1}</small>
                                 </div>
                             ))}
                         </div>
@@ -75,36 +72,27 @@ const AdminHome = () => {
                 </div>
                 
                 <div className="col-md-4">
-                    <div className="card bg-dark text-white border-secondary shadow h-100">
-                        <div className="card-header bg-transparent border-secondary text-white">
-                            <h5 className="mb-0" style={{ fontFamily: 'Orbitron' }}>Métricas Rápidas</h5>
+                    <div className="card h-100">
+                        <div className="card-header bg-transparent border-secondary">
+                            <h5 className="mb-0 cyber-font text-white">Estado del Sistema</h5>
                         </div>
                         <div className="card-body">
                             <div className="mb-4">
                                 <div className="d-flex justify-content-between mb-1">
-                                    <span>Tasa de Conversión</span>
-                                    <span className="text-neon-green">4.5%</span>
+                                    <span className="text-secondary">Servidor</span>
+                                    <span className="text-success">En Línea</span>
                                 </div>
-                                <div className="progress bg-secondary" style={{ height: '5px' }}>
-                                    <div className="progress-bar bg-success" style={{ width: '45%' }}></div>
+                                <div className="progress" style={{ height: '6px', background: '#333' }}>
+                                    <div className="progress-bar bg-success" style={{ width: '100%' }}></div>
                                 </div>
                             </div>
                             <div className="mb-4">
                                 <div className="d-flex justify-content-between mb-1">
-                                    <span>Nuevos Clientes</span>
-                                    <span className="text-neon-blue">+12</span>
+                                    <span className="text-secondary">Base de Datos</span>
+                                    <span className="text-info">Conectado</span>
                                 </div>
-                                <div className="progress bg-secondary" style={{ height: '5px' }}>
-                                    <div className="progress-bar bg-info" style={{ width: '65%' }}></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="d-flex justify-content-between mb-1">
-                                    <span>Satisfacción</span>
-                                    <span className="text-warning">98%</span>
-                                </div>
-                                <div className="progress bg-secondary" style={{ height: '5px' }}>
-                                    <div className="progress-bar bg-warning" style={{ width: '98%' }}></div>
+                                <div className="progress" style={{ height: '6px', background: '#333' }}>
+                                    <div className="progress-bar bg-info" style={{ width: '100%' }}></div>
                                 </div>
                             </div>
                         </div>

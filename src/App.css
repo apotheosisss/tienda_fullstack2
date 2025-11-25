@@ -1,131 +1,99 @@
-/* --- NAVBAR CORREGIDA --- */
-.navbar {
-  background-color: rgba(15, 23, 42, 0.95) !important; /* Fondo oscuro sólido con toque de transparencia */
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--cyber-neon-blue);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-  padding: 1rem 0;
+/* --- NAVBAR Y HEADER --- */
+.navbar, header {
+  background-color: #050509 !important;
+  border-bottom: 1px solid #1e293b;
+  z-index: 1050;
 }
 
-.navbar-brand {
-  color: var(--cyber-neon-blue) !important;
-  font-weight: 800;
-  font-size: 1.5rem;
-  text-shadow: 0 0 10px var(--cyber-neon-blue);
-}
-
+/* --- LINKS NAVEGACIÓN --- */
 .nav-link {
-  color: var(--cyber-text-muted) !important;
   font-family: 'Rajdhani', sans-serif;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
   text-transform: uppercase;
+  color: #e2e8f0 !important;
   transition: all 0.3s ease;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: var(--cyber-text-main) !important;
-  text-shadow: 0 0 8px var(--cyber-neon-purple);
-  transform: translateY(-2px);
+  color: #00f3ff !important;
 }
 
-/* Dropdown Menú Oscuro */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #00f3ff;
+}
+
+/* --- DROPDOWNS (Menú Navbar) --- */
 .dropdown-menu {
-  background-color: var(--cyber-bg-panel) !important;
-  border: 1px solid var(--cyber-neon-blue);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+  background-color: #090a0f !important;
+  border: 1px solid #00f3ff !important;
+  margin-top: 10px !important;
+  padding: 0;
 }
+
 .dropdown-item {
-  color: var(--cyber-text-main) !important;
+  color: #ffffff !important;
+  background-color: transparent !important;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
+
 .dropdown-item:hover {
-  background-color: rgba(0, 243, 255, 0.1);
-  color: var(--cyber-neon-blue) !important;
+  background-color: #00f3ff !important;
+  color: #000000 !important; /* Alto contraste al pasar mouse */
 }
 
-/* --- CARDS CYBERPUNK --- */
-.card {
-  background-color: var(--cyber-bg-surface) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--cyber-text-main);
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.card:hover {
-  border-color: var(--cyber-neon-blue);
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-  transform: translateY(-5px);
-}
-
-.card-header {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-family: 'Orbitron', sans-serif;
-}
-
-/* --- BOTONES NEÓN --- */
-.btn-primary {
-  background: transparent !important;
-  border: 1px solid var(--cyber-neon-blue) !important;
-  color: var(--cyber-neon-blue) !important;
-  font-family: 'Orbitron', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 0 5px var(--cyber-neon-blue);
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: var(--cyber-neon-blue) !important;
-  color: #000 !important; /* Texto negro para contraste al hacer hover */
-  box-shadow: 0 0 20px var(--cyber-neon-blue);
-}
-
-.btn-success {
-  background: transparent !important;
-  border: 1px solid var(--cyber-neon-green) !important;
-  color: var(--cyber-neon-green) !important;
-  box-shadow: 0 0 5px var(--cyber-neon-green);
-}
-
-.btn-success:hover {
-  background: var(--cyber-neon-green) !important;
-  color: #000 !important;
-  box-shadow: 0 0 20px var(--cyber-neon-green);
-}
-
-/* --- FORMULARIOS --- */
-.form-control, .form-select {
-  background-color: rgba(0, 0, 0, 0.3) !important;
+/* --- FORMULARIOS (SELECTS E INPUTS) --- */
+.form-control, .form-select, input, select, textarea {
+  background-color: #1e293b !important; /* Fondo oscuro sólido */
+  color: #ffffff !important;             /* Texto blanco */
   border: 1px solid #334155 !important;
-  color: var(--cyber-text-main) !important;
 }
 
 .form-control:focus, .form-select:focus {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  border-color: var(--cyber-neon-blue) !important;
+  border-color: #00f3ff !important;
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.3) !important;
-  color: var(--cyber-text-main) !important;
+  background-color: #0f172a !important; /* Un poco más oscuro al enfocar */
 }
 
-/* --- MODALES Y ALERTAS --- */
-.modal-content {
-  background-color: var(--cyber-bg-surface);
-  border: 1px solid var(--cyber-neon-purple);
-  box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
+/* Regla de respaldo para las opciones del select */
+option {
+  background-color: #050509;
+  color: white;
 }
 
-.modal-header, .modal-footer {
-  border-color: rgba(255, 255, 255, 0.1);
+/* --- AUTOCOMPLETE FIX (Chrome) --- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: white;
 }
 
-.btn-close {
-  filter: invert(1) grayscale(100%) brightness(200%); /* Hace la X blanca */
+/* --- OTROS --- */
+.btn-icon-nav {
+  color: #00f3ff;
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 243, 255, 0.05);
 }
-
-.alert-info {
-  background-color: rgba(0, 243, 255, 0.1);
-  border-color: var(--cyber-neon-blue);
-  color: var(--cyber-neon-blue) !important;
+.badge-cart {
+  background-color: #ff0055 !important;
+  color: white;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  border: 2px solid #050509;
 }
